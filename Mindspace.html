@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindSpace AI - Advanced Therapy Companion</title>
+    <style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --ai-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
+        --shadow-dark: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --text-primary: #2d3748;
+        --text-secondary: #718096;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+        width: 100%;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--primary-gradient);
+        overflow: hidden;
+    }
+
+    .container {
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .header {
+        background: var(--secondary-gradient);
+        color: white;
+        padding: 24px;
+        text-align: center;
+        position: relative;
+        box-shadow: var(--shadow-dark);
+    }
+
+    .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .header p {
+        opacity: 0.9;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .status-panel {
+        position: absolute;
+        top: 20px;
+        right: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 6px 12px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ff4757;
+        animation: pulse 2s infinite;
+    }
+
+    .status-dot.online {
+        background: #2ed573;
+    }
+
+    .mood-tracker {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 8px;
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        font-size: 10px;
+    }
+
+    .settings-panel {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .api-config {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .input-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .api-input, .model-select {
+        padding: 10px 14px;
+        border: 2px solid rgba(79, 172, 254, 0.2);
+        border-radius: 12px;
+        font-size: 13px;
+        background: white;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .api-input:focus, .model-select:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
+
+    .api-input {
+        width: 280px;
+    }
+
+    .model-select {
+        min-width: 220px;
+    }
+
+    .control-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+        background: var(--secondary-gradient);
+        color: white;
+        box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(79, 172, 254, 0.4);
+    }
+
+    .btn-secondary {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+        border: 2px solid rgba(79, 172, 254, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(79, 172, 254, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .chat-container {
+        flex-grow: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 24px;
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        position: relative;
+    }
+
+    .chat-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+    }
+
+    .chat-container::-webkit-scrollbar-thumb {
+        background: rgba(79, 172, 254, 0.3);
+        border-radius: 3px;
+    }
+
+    .message {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        animation: slideIn 0.4s ease-out;
+        gap: 12px;
+    }
+
+    .message.user {
+        justify-content: flex-end;
+        flex-direction: row-reverse;
+    }
+
+    .message-bubble {
+        max-width: 75%;
+        padding: 16px 20px;
+        border-radius: 24px;
+        line-height: 1.6;
+        position: relative;
+        white-space: pre-wrap;
+        box-shadow: var(--shadow-light);
+        backdrop-filter: blur(20px);
+    }
+
+    .message.bot .message-bubble {
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--text-primary);
+        border-bottom-left-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .message.user .message-bubble {
+        background: var(--primary-gradient);
+        color: white;
+        border-bottom-right-radius: 8px;
+    }
+
+    .message.ai .message-bubble {
+        background: var(--ai-gradient);
+        color: var(--text-primary);
+        border-bottom-left-radius: 8px;
+        box-shadow: 0 8px 32px rgba(67, 233, 123, 0.3);
+    }
+
+    .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        box-shadow: var(--shadow-light);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .bot-avatar {
+        background: var(--secondary-gradient);
+    }
+
+    .ai-avatar {
+        background: var(--ai-gradient);
+    }
+
+    .user-avatar {
+        background: var(--primary-gradient);
+    }
+
+    .message-meta {
+        font-size: 10px;
+        opacity: 0.7;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .sentiment-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 9px;
+    }
+
+    .input-container {
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .input-wrapper {
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        background: white;
+        border-radius: 28px;
+        padding: 6px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 2px solid rgba(79, 172, 254, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .input-row:focus-within {
+        border-color: #4facfe;
+        box-shadow: 0 8px 32px rgba(79, 172, 254, 0.2);
+    }
+
+    .input-field {
+        flex: 1;
+        padding: 12px 18px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        background: transparent;
+        resize: none;
+        min-height: 24px;
+        max-height: 120px;
+        font-family: inherit;
+    }
+
+    .input-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .send-btn {
+        background: var(--secondary-gradient);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+    }
+
+    .send-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 24px rgba(79, 172, 254, 0.4);
+    }
+
+    .send-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .voice-btn {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+        border: 2px solid rgba(79, 172, 254, 0.2);
+        padding: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .voice-btn:hover {
+        background: rgba(79, 172, 254, 0.2);
+        transform: scale(1.05);
+    }
+
+    .voice-btn.recording {
+        background: #ff4757;
+        color: white;
+        border-color: #ff4757;
+        animation: pulse 1s infinite;
+    }
+
+    .typing-indicator {
+        display: none;
+        margin-bottom: 20px;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .typing-indicator .message-bubble {
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        border-bottom-left-radius: 8px;
+        max-width: 80px;
+        box-shadow: var(--shadow-light);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+    }
+
+    .typing-dots span {
+        width: 8px;
+        height: 8px;
+        background: #4facfe;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    .suggested-responses {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .suggestion-btn {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+        border: 2px solid rgba(79, 172, 254, 0.2);
+        padding: 8px 14px;
+        border-radius: 16px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .suggestion-btn:hover {
+        background: #4facfe;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+    }
+
+    .mood-selector {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        align-items: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    .mood-emoji {
+        cursor: pointer;
+        font-size: 20px;
+        padding: 8px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .mood-emoji:hover {
+        transform: scale(1.2);
+        background: rgba(79, 172, 254, 0.1);
+    }
+
+    .mood-emoji.selected {
+        background: var(--secondary-gradient);
+        transform: scale(1.1);
+    }
+
+    .error-message {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin: 12px 0;
+        font-size: 13px;
+        box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .loading-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: var(--secondary-gradient);
+        animation: loading 2s infinite ease-in-out;
+        display: none;
+        border-radius: 0 3px 0 0;
+    }
+
+    .session-stats {
+        display: flex;
+        gap: 16px;
+        font-size: 11px;
+        color: var(--text-secondary);
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 12px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .stats-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--text-primary);
+        padding: 12px 16px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-dark);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: all 0.4s ease;
+    }
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    @keyframes slideIn {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px); 
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+    }
+
+    @keyframes typing {
+        0%, 80%, 100% { 
+            transform: scale(0.8); 
+            opacity: 0.5; 
+        }
+        40% { 
+            transform: scale(1); 
+            opacity: 1; 
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    @keyframes loading {
+        0% { width: 0%; }
+        50% { width: 100%; }
+        100% { width: 0%; }
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            padding: 16px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .settings-panel {
+            padding: 12px 16px;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .api-config {
+            flex-direction: column;
+        }
+        
+        .api-input {
+            width: 100%;
+        }
+        
+        .chat-container {
+            padding: 16px;
+        }
+        
+        .message-bubble {
+            max-width: 85%;
+        }
+        
+        .input-container {
+            padding: 16px;
+        }
+        
+        .status-panel {
+            position: relative;
+            top: auto;
+            right: auto;
+            margin-top: 12px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MindSpace AI</h1>
+            <p>Your intelligent therapy companion with advanced emotional support</p>
+            <div class="status-panel">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Initializing...</span>
+                </div>
+                <div class="mood-tracker">
+                    <span>Session:</span>
+                    <span id="sessionMood">😊</span>
+                </div>
+                <div class="session-stats">
+                    <div class="stats-item">
+                        <span>💬</span>
+                        <span id="messageCount">0</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>⏱️</span>
+                        <span id="sessionTime">0m</span>
+                    </div>
+                </div>
+            </div>
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+
+        <div class="settings-panel">
+            <div class="api-config">
+                <div class="input-group">
+                    <label class="input-label">AI Model</label>
+                    <select id="modelSelect" class="model-select">
+                        <option value="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo">Llama 3.1 8B Instruct</option>
+                        <option value="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo">Llama 3.1 70B Instruct</option>
+                        <option value="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo">Llama 3.1 405B Instruct</option>
+                        <option value="mistralai/Mixtral-8x7B-Instruct-v0.1">Mixtral 8x7B Instruct</option>
+                        <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">Nous Hermes 2 Mixtral</option>
+                        <option value="openchat/openchat-3.5-1210">OpenChat 3.5</option>
+                        <option value="Qwen/Qwen2.5-72B-Instruct-Turbo">Qwen 2.5 72B Instruct</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Together.ai API Key</label>
+                    <input type="password" class="api-input" id="apiKey" placeholder="Enter your API key..." />
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button class="btn btn-primary" onclick="testConnection()">Test Connection</button>
+                <button class="btn btn-secondary" onclick="clearSession()">New Session</button>
+                <button class="btn btn-secondary" onclick="exportChat()">Export Chat</button>
+            </div>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot">
+                <div class="avatar bot-avatar">🧠</div>
+                <div class="message-bubble">
+                    Welcome to MindSpace AI! I'm your advanced therapy companion powered by cutting-edge AI technology.
+                    <div class="message-meta">
+                        <span>System Message</span>
+                        <div class="sentiment-indicator">✨ Welcoming</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message bot">
+                <div class="avatar bot-avatar">🧠</div>
+                <div class="message-bubble">
+                    I'm here to provide you with personalized emotional support, therapeutic guidance, and a safe space to explore your thoughts and feelings. How are you feeling today?
+                    
+                    <div class="mood-selector">
+                        <span>Quick mood check:</span>
+                        <div class="mood-emoji" onclick="selectMood('😊', 'happy')" title="Happy">😊</div>
+                        <div class="mood-emoji" onclick="selectMood('😔', 'sad')" title="Sad">😔</div>
+                        <div class="mood-emoji" onclick="selectMood('😰', 'anxious')" title="Anxious">😰</div>
+                        <div class="mood-emoji" onclick="selectMood('😡', 'angry')" title="Angry">😡</div>
+                        <div class="mood-emoji" onclick="selectMood('😴', 'tired')" title="Tired">😴</div>
+                        <div class="mood-emoji" onclick="selectMood('🤔', 'confused')" title="Confused">🤔</div>
+                    </div>
+                    
+                    <div class="suggested-responses">
+                        <button class="suggestion-btn" onclick="sendSuggestion('I\'ve been feeling overwhelmed with work stress lately')">Work Stress</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('I\'m having trouble in my relationships')">Relationship Issues</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('I feel anxious about the future')">Future Anxiety</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('I want to work on my self-confidence')">Self-Confidence</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('I need help managing my emotions')">Emotional Regulation</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('Just need someone to listen')">Need Support</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="avatar ai-avatar">🤖</div>
+                <div class="message-bubble">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <div class="input-row">
+                    <textarea class="input-field" id="messageInput" placeholder="Share what's on your mind... I'm here to listen and support you." rows="1"></textarea>
+                    <div class="input-actions">
+                        <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Input">🎤</button>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send Message">
+                            ➤
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AdvancedMindSpaceAI {
+            constructor() {
+                this.apiKey = '';
+                this.selectedModel = 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo';
+                this.isConnected = false;
+                this.conversationHistory = [];
+                this.currentMood = 'neutral';
+                this.sessionStats = {
+                    startTime: Date.now(),
+                    messageCount: 0,
+                    moodHistory: [],
+                    totalSessions: this.getTotalSessions() + 1
+                };
+                this.isRecording = false;
+                this.recognition = null;
+                this.sessionTimer = null;
+
+                this.initializeApp();
+            }
+
+            initializeApp() {
+                this.initializeEventListeners();
+                this.loadSettings();
+                this.updateStatus();
+                this.startSessionTimer();
+                this.initializeSpeechRecognition();
+                this.showNotification('Welcome to MindSpace AI! Your session has started.', 'success');
+            }
+
+            initializeEventListeners() {
+                const input = document.getElementById('messageInput');
+                const modelSelect = document.getElementById('modelSelect');
+                const apiKeyInput = document.getElementById('apiKey');
+
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                input.addEventListener('input', () => {
+                    this.autoResize(input);
+                });
+
+                modelSelect.addEventListener('change', (e) => {
+                    this.selectedModel = e.target.value;
+                    this.saveSettings();
+                    this.showNotification(`Switched to ${e.target.options[e.target.selectedIndex].text}`, 'info');
+                });
+
+                apiKeyInput.addEventListener('change', (e) => {
+                    this.apiKey = e.target.value;
+                    this.saveSettings();
+                    this.updateStatus();
+                });
+
+                // Auto-save conversation every 30 seconds
+                setInterval(() => {
+                    this.saveConversation();
+                }, 30000);
+            }
+
+            initializeSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = true;
+                    this.recognition.lang = 'en-US';
+
+                    this.recognition.onresult = (event) => {
+                        const transcript = Array.from(event.results)
+                            .map(result => result[0])
+                            .map(result => result.transcript)
+                            .join('');
+
+                        document.getElementById('messageInput').value = transcript;
+                        this.autoResize(document.getElementById('messageInput'));
+                    };
+
+                    this.recognition.onend = () => {
+                        this.isRecording = false;
+                        document.getElementById('voiceBtn').classList.remove('recording');
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.showNotification('Voice input failed. Please try again.', 'error');
+                        this.isRecording = false;
+                        document.getElementById('voiceBtn').classList.remove('recording');
+                    };
+                }
+            }
+
+            autoResize(textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            }
+
+            loadSettings() {
+                const saved = JSON.parse(localStorage.getItem('mindspace-ai-settings') || '{}');
+                this.apiKey = saved.apiKey || '';
+                this.selectedModel = saved.selectedModel || 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo';
+                
+                document.getElementById('apiKey').value = this.apiKey;
+                document.getElementById('modelSelect').value = this.selectedModel;
+                
+                // Load conversation history
+                const savedConversation = JSON.parse(localStorage.getItem('mindspace-conversation') || '[]');
+                if (savedConversation.length > 0) {
+                    this.conversationHistory = savedConversation;
+                    this.restoreConversation();
+                }
+            }
+
+            saveSettings() {
+                const settings = {
+                    apiKey: this.apiKey,
+                    selectedModel: this.selectedModel,
+                    totalSessions: this.sessionStats.totalSessions
+                };
+                localStorage.setItem('mindspace-ai-settings', JSON.stringify(settings));
+            }
+
+            saveConversation() {
+                localStorage.setItem('mindspace-conversation', JSON.stringify(this.conversationHistory));
+            }
+
+            restoreConversation() {
+                // Clear existing messages except welcome messages
+                const chatContainer = document.getElementById('chatContainer');
+                const messages = chatContainer.querySelectorAll('.message:not(.system-message)');
+                messages.forEach(msg => msg.remove());
+
+                // Restore conversation
+                this.conversationHistory.forEach(msg => {
+                    if (msg.role === 'user') {
+                        this.addMessage(msg.content, 'user', null, false);
+                    } else if (msg.role === 'assistant') {
+                        this.addMessage(msg.content, 'ai', msg.meta || {}, false);
+                    }
+                });
+            }
+
+            getTotalSessions() {
+                const saved = JSON.parse(localStorage.getItem('mindspace-ai-settings') || '{}');
+                return saved.totalSessions || 0;
+            }
+
+            startSessionTimer() {
+                this.sessionTimer = setInterval(() => {
+                    const elapsed = Date.now() - this.sessionStats.startTime;
+                    const minutes = Math.floor(elapsed / 60000);
+                    document.getElementById('sessionTime').textContent = `${minutes}m`;
+                }, 60000);
+            }
+
+            updateStatus() {
+                const statusDot = document.getElementById('statusDot');
+                const statusText = document.getElementById('statusText');
+                
+                if (this.apiKey && this.isConnected) {
+                    statusDot.className = 'status-dot online';
+                    statusText.textContent = 'AI Connected';
+                } else if (this.apiKey) {
+                    statusDot.className = 'status-dot';
+                    statusText.textContent = 'Ready to Connect';
+                } else {
+                    statusDot.className = 'status-dot';
+                    statusText.textContent = 'API Key Required';
+                }
+            }
+
+            async testConnection() {
+                if (!this.apiKey) {
+                    this.showError('Please enter your Together.ai API key first.');
+                    return;
+                }
+
+                const loadingBar = document.getElementById('loadingBar');
+                loadingBar.style.display = 'block';
+
+                try {
+                    const response = await this.callTogetherAI([
+                        { role: 'user', content: 'Hello, this is a connection test.' }
+                    ]);
+                    this.isConnected = true;
+                    this.addMessage('✅ Connection successful! Advanced AI therapy model is ready for our conversation.', 'bot', 'Connection Test');
+                    this.showNotification('Connection successful!', 'success');
+                } catch (error) {
+                    this.isConnected = false;
+                    this.showError(`Connection failed: ${error.message}`);
+                    this.showNotification('Connection failed. Please check your API key.', 'error');
+                } finally {
+                    loadingBar.style.display = 'none';
+                    this.updateStatus();
+                }
+            }
+
+            async sendMessage(message = null) {
+                const input = document.getElementById('messageInput');
+                const messageText = message || input.value.trim();
+                
+                if (!messageText) return;
+
+                if (!this.apiKey) {
+                    this.showError('Please enter your Together.ai API key to start our therapy session.');
+                    return;
+                }
+
+                this.addMessage(messageText, 'user');
+                input.value = '';
+                input.style.height = 'auto';
+                
+                this.conversationHistory.push({
+                    role: 'user',
+                    content: messageText,
+                    timestamp: Date.now(),
+                    mood: this.currentMood
+                });
+                
+                this.sessionStats.messageCount++;
+                document.getElementById('messageCount').textContent = this.sessionStats.messageCount;
+
+                this.showTypingIndicator();
+                
+                try {
+                    const response = await this.getAdvancedTherapeuticResponse(messageText);
+                    this.addMessage(response.content, 'ai', response.meta);
+                    
+                    this.conversationHistory.push({
+                        role: 'assistant',
+                        content: response.content,
+                        timestamp: Date.now(),
+                        meta: response.meta
+                    });
+
+                    this.saveConversation();
+                } catch (error) {
+                    this.handleError(error);
+                } finally {
+                    this.hideTypingIndicator();
+                }
+            }
+
+            async getAdvancedTherapeuticResponse(userMessage) {
+                try {
+                    const messages = this.buildAdvancedTherapeuticMessages(userMessage);
+                    const response = await this.callTogetherAI(messages);
+                    
+                    const sentiment = this.analyzeSentiment(userMessage);
+                    const suggestions = this.generateSuggestions(userMessage, response);
+                    
+                    return {
+                        content: response,
+                        meta: {
+                            source: 'Together.ai',
+                            model: this.selectedModel.split('/').pop(),
+                            timestamp: new Date().toLocaleTimeString(),
+                            sentiment: sentiment,
+                            suggestions: suggestions,
+                            mood: this.currentMood
+                        }
+                    };
+                } catch (error) {
+                    console.error('AI Response Error:', error);
+                    return this.getAdvancedFallbackResponse(userMessage);
+                }
+            }
+
+            buildAdvancedTherapeuticMessages(userMessage) {
+                const systemPrompt = `You are an advanced AI therapy companion with deep expertise in psychological support, emotional intelligence, and therapeutic techniques. Your role is to provide compassionate, personalized, and professional emotional support.
+
+Core Therapeutic Principles:
+- Practice active listening and validate emotions
+- Use evidence-based therapeutic techniques (CBT, DBT, mindfulness)
+- Provide personalized responses based on conversation context
+- Maintain appropriate therapeutic boundaries
+- Encourage self-reflection and personal growth
+- Offer practical coping strategies and solutions
+- Be empathetic, non-judgmental, and supportive
+
+Current Session Context:
+- User's current mood: ${this.currentMood}
+- Session duration: ${Math.floor((Date.now() - this.sessionStats.startTime) / 60000)} minutes
+- Message count: ${this.sessionStats.messageCount}
+- This is session #${this.sessionStats.totalSessions}
+
+Response Guidelines:
+- Keep responses conversational but therapeutic (2-4 sentences)
+- Ask thoughtful follow-up questions when appropriate
+- Provide actionable advice and coping strategies
+- Acknowledge progress and validate feelings
+- Use the user's name or personal details when mentioned
+- Adapt your communication style to the user's needs
+
+Remember: You are not replacing professional therapy but providing intelligent emotional support and guidance.`;
+
+                const messages = [
+                    { role: 'system', content: systemPrompt }
+                ];
+
+                // Add relevant conversation history (last 8 messages for better context)
+                const recentHistory = this.conversationHistory.slice(-8);
+                messages.push(...recentHistory.map(msg => ({
+                    role: msg.role,
+                    content: msg.content
+                })));
+
+                // Add current user message
+                messages.push({ role: 'user', content: userMessage });
+
+                return messages;
+            }
+
+            analyzeSentiment(text) {
+                const positiveWords = ['happy', 'good', 'great', 'excellent', 'wonderful', 'amazing', 'love', 'joy', 'excited'];
+                const negativeWords = ['sad', 'bad', 'terrible', 'awful', 'hate', 'angry', 'depressed', 'anxious', 'worried'];
+                
+                const words = text.toLowerCase().split(/\s+/);
+                let positiveCount = 0;
+                let negativeCount = 0;
+                
+                words.forEach(word => {
+                    if (positiveWords.some(pw => word.includes(pw))) positiveCount++;
+                    if (negativeWords.some(nw => word.includes(nw))) negativeCount++;
+                });
+                
+                if (positiveCount > negativeCount) return '😊 Positive';
+                if (negativeCount > positiveCount) return '😔 Negative';
+                return '😐 Neutral';
+            }
+
+            generateSuggestions(userMessage, aiResponse) {
+                const suggestions = [];
+                
+                if (userMessage.toLowerCase().includes('anxious') || userMessage.toLowerCase().includes('worry')) {
+                    suggestions.push('Tell me more about what triggers your anxiety');
+                    suggestions.push('Would you like to try a breathing exercise?');
+                }
+                
+                if (userMessage.toLowerCase().includes('work') || userMessage.toLowerCase().includes('job')) {
+                    suggestions.push('How is your work-life balance?');
+                    suggestions.push('What aspects of work stress you most?');
+                }
+                
+                if (userMessage.toLowerCase().includes('relationship')) {
+                    suggestions.push('What would improve this relationship?');
+                    suggestions.push('How do you communicate your needs?');
+                }
+                
+                return suggestions.slice(0, 3); // Return max 3 suggestions
+            }
+
+            async callTogetherAI(messages) {
+                const apiUrl = 'https://api.together.xyz/v1/chat/completions';
+                
+                const requestBody = {
+                    model: this.selectedModel,
+                    messages: messages,
+                    max_tokens: 400,
+                    temperature: 0.7,
+                    top_p: 0.9,
+                    frequency_penalty: 0.1,
+                    presence_penalty: 0.1,
+                    stream: false
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${this.apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.choices && data.choices.length > 0) {
+                    return data.choices[0].message.content.trim();
+                } else {
+                    throw new Error('Unexpected response format from Together.ai API');
+                }
+            }
+
+            getAdvancedFallbackResponse(userMessage) {
+                const fallbackResponses = [
+                    {
+                        content: "I hear you, and I want you to know that your feelings are completely valid. Sometimes when technology fails us, it's a reminder that human connection and understanding transcend any system. Can you tell me more about what's been weighing on your mind?",
+                        sentiment: "💙 Supportive"
+                    },
+                    {
+                        content: "Thank you for trusting me with your thoughts. Even though I'm experiencing some technical difficulties, I want you to know that your mental health and well-being are important. What would be most helpful for you right now?",
+                        sentiment: "🤗 Caring"
+                    },
+                    {
+                        content: "I can sense that this is important to you, and I wish I could respond with my full capabilities right now. While we work through this technical issue, please know that your feelings matter and you deserve support. How are you taking care of yourself today?",
+                        sentiment: "✨ Understanding"
+                    }
+                ];
+                
+                const response = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+                
+                return {
+                    content: response.content,
+                    meta: {
+                        source: 'Fallback Response',
+                        sentiment: response.sentiment,
+                        note: 'AI service temporarily unavailable',
+                        suggestions: ['Tell me more about your feelings', 'What support do you need?']
+                    }
+                };
+            }
+
+            addMessage(content, sender, meta = null, saveToHistory = true) {
+                const chatContainer = document.getElementById('chatContainer');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                const avatarClass = sender === 'user' ? 'user-avatar' : (sender === 'ai' ? 'ai-avatar' : 'bot-avatar');
+                const avatarEmoji = sender === 'user' ? '👤' : (sender === 'ai' ? '🤖' : '🧠');
+                
+                let metaHtml = '';
+                if (meta) {
+                    const metaItems = [];
+                    if (typeof meta === 'string') {
+                        metaItems.push(meta);
+                    } else {
+                        if (meta.source) metaItems.push(meta.source);
+                        if (meta.model) metaItems.push(meta.model);
+                        if (meta.timestamp) metaItems.push(meta.timestamp);
+                    }
+                    
+                    metaHtml = `<div class="message-meta">
+                        <span>${metaItems.join(' • ')}</span>
+                        ${meta.sentiment ? `<div class="sentiment-indicator">${meta.sentiment}</div>` : ''}
+                    </div>`;
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="avatar ${avatarClass}">${avatarEmoji}</div>
+                    <div class="message-bubble">
+                        ${content}
+                        ${metaHtml}
+                        ${meta && meta.suggestions ? this.renderSuggestions(meta.suggestions) : ''}
+                    </div>
+                `;
+                
+                // Remove typing indicator before adding new message
+                const typingIndicator = document.getElementById('typingIndicator');
+                typingIndicator.style.display = 'none';
+                
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            renderSuggestions(suggestions) {
+                if (!suggestions || suggestions.length === 0) return '';
+                
+                return `<div class="suggested-responses">
+                    ${suggestions.map(suggestion => 
+                        `<button class="suggestion-btn" onclick="sendSuggestion('${suggestion.replace(/'/g, "\\'")}')">${suggestion}</button>`
+                    ).join('')}
+                </div>`;
+            }
+
+            showTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                typingIndicator.style.display = 'flex';
+                
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                typingIndicator.style.display = 'none';
+            }
+
+            toggleVoiceInput() {
+                if (!this.recognition) {
+                    this.showNotification('Voice input not supported in this browser.', 'error');
+                    return;
+                }
+
+                if (this.isRecording) {
+                    this.recognition.stop();
+                    this.isRecording = false;
+                    document.getElementById('voiceBtn').classList.remove('recording');
+                } else {
+                    this.recognition.start();
+                    this.isRecording = true;
+                    document.getElementById('voiceBtn').classList.add('recording');
+                    this.showNotification('Listening... Speak now.', 'info');
+                }
+            }
+
+            selectMood(emoji, mood) {
+                this.currentMood = mood;
+                document.getElementById('sessionMood').textContent = emoji;
+                this.sessionStats.moodHistory.push({ mood, timestamp: Date.now() });
+                
+                // Update mood emoji selection
+                document.querySelectorAll('.mood-emoji').forEach(el => el.classList.remove('selected'));
+                event.target.classList.add('selected');
+                
+                this.showNotification(`Mood updated to ${mood}`, 'info');
+            }
+
+            sendSuggestion(message) {
+                this.sendMessage(message);
+            }
+
+            clearSession() {
+                if (confirm('Are you sure you want to start a new session? This will clear the current conversation.')) {
+                    this.conversationHistory = [];
+                    localStorage.removeItem('mindspace-conversation');
+                    
+                    // Clear chat container except welcome messages
+                    const chatContainer = document.getElementById('chatContainer');
+                    const messages = chatContainer.querySelectorAll('.message:not(.system-message)');
+                    messages.forEach(msg => msg.remove());
+                    
+                    // Reset session stats
+                    this.sessionStats = {
+                        startTime: Date.now(),
+                        messageCount: 0,
+                        moodHistory: [],
+                        totalSessions: this.sessionStats.totalSessions + 1
+                    };
+                    
+                    document.getElementById('messageCount').textContent = '0';
+                    document.getElementById('sessionTime').textContent = '0m';
+                    
+                    this.saveSettings();
+                    this.showNotification('New session started!', 'success');
+                }
+            }
+
+            exportChat() {
+                const conversation = this.conversationHistory.map(msg => {
+                    const timestamp = new Date(msg.timestamp).toLocaleString();
+                    const role = msg.role === 'user' ? 'You' : 'MindSpace AI';
+                    return `[${timestamp}] ${role}: ${msg.content}`;
+                }).join('\n\n');
+                
+                const sessionInfo = `
+MindSpace AI - Therapy Session Export
+Session Start: ${new Date(this.sessionStats.startTime).toLocaleString()}
+Total Messages: ${this.sessionStats.messageCount}
+Session Duration: ${Math.floor((Date.now() - this.sessionStats.startTime) / 60000)} minutes
+Model Used: ${this.selectedModel}
+
+--- Conversation ---
+
+${conversation}
+                `.trim();
+                
+                const blob = new Blob([sessionInfo], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `mindspace-session-${new Date().toISOString().split('T')[0]}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                this.showNotification('Chat exported successfully!', 'success');
+            }
+
+            showError(message) {
+                const chatContainer = document.getElementById('chatContainer');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = message;
+                chatContainer.appendChild(errorDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // Auto-remove error after 10 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.parentNode.removeChild(errorDiv);
+                    }
+                }, 10000);
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                
+                if (type === 'error') {
+                    notification.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+                    notification.style.color = 'white';
+                } else if (type === 'success') {
+                    notification.style.background = 'linear-gradient(135deg, #43e97b, #38f9d7)';
+                    notification.style.color = '#333';
+                }
+                
+                document.body.appendChild(notification);
+                
+                // Show notification
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 400);
+                }, 3000);
+            }
+
+            handleError(error) {
+                console.error('Error:', error);
+                this.showError(`I'm having trouble connecting right now. ${error.message || 'Please try again.'}`);
+                this.isConnected = false;
+                this.updateStatus();
+            }
+        }
+
+        // Global functions for onclick events
+        let mindSpaceAI;
+
+        function sendSuggestion(message) {
+            mindSpaceAI.sendMessage(message);
+        }
+
+        function sendMessage() {
+            mindSpaceAI.sendMessage();
+        }
+
+        function testConnection() {
+            mindSpaceAI.testConnection();
+        }
+
+        function clearSession() {
+            mindSpaceAI.clearSession();
+        }
+
+        function exportChat() {
+            mindSpaceAI.exportChat();
+        }
+
+        function toggleVoiceInput() {
+            mindSpaceAI.toggleVoiceInput();
+        }
+
+        function selectMood(emoji, mood) {
+            mindSpaceAI.selectMood(emoji, mood);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            mindSpaceAI = new AdvancedMindSpaceAI();
+        });
+    </script>
+</body>
+</html>
